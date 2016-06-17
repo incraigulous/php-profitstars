@@ -28,8 +28,8 @@ $credentials = [
     'entity-id'=>"YOUR_ENTITY_ID",
     'location-id'=>"YOUR_LOCATION_ID",
 ];
-$proc = new \incraigulous\ProfitStars\ProcessTransaction($credentials);
-$trans = new \incraigulous\ProfitStars\WSTransaction;
+$proc = new \jdavidbakr\ProfitStars\ProcessTransaction($credentials);
+$trans = new \jdavidbakr\ProfitStars\WSTransaction;
 
 // Test connection
 if($proc->TestConnection()) {
