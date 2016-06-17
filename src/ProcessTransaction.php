@@ -2,38 +2,77 @@
 
 namespace jdavidbakr\ProfitStars;
 
-class ProcessTransaction extends RequestBase {
+use League\Plates\Engine as Plates;
 
+class ProcessTransaction extends RequestBase {
     protected $endpoint = 'https://ws.eps.profitstars.com/PV/TransactionProcessing.asmx';
     public $ReferenceNumber;
     public $ResponseMessage;
+    public $credentials;
+    public $views;
+
+    public function __construct(array $credentials)
+    {
+        $this->setCredentials($credentials);
+        $this->initViews();
+    }
+
+    /**
+     * Initialize plates.
+     */
+    protected function initViews() {
+        $this->views = new Plates(dirname(__FILE__) . '/views');
+    }
+
+    /**
+     * Load the credentials.
+     * @param $credentials
+     * @throws \Exception
+     */
+    public function setCredentials($credentials)
+    {
+        if (empty($credentials['store-id'])) throw new \Exception('ProfitStars store key is required.');
+        if (empty($credentials['store-key'])) throw new \Exception('ProfitStars store id is required.');
+        if (empty($credentials['entity-id'])) throw new \Exception('ProfitStars entity id is required.');
+        if (empty($credentials['location-id'])) throw new \Exception('ProfitStars location id is required.');
+        $this->credentials = $credentials;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCredentials()
+    {
+        return $this->credentials;
+    }
 
     /**
      * Tests the connection to the web service
      */
     public function TestConnection()
     {
-        $view = view('profitstars::process-transaction.test-connection');
+        $view = $this->views->render('process-transaction/test-connection', ['credentials' => $this->getCredentials()]);
         $xml = $this->Call($view);
         if(!$xml) {
-            abort(500, $this->faultstring);
+            throw new \Exception($this->faultstring);
         }
         return (bool)$xml->TestConnectionResult[0];
     }
 
     public function TestCredentials()
     {
-        $view = view('profitstars::process-transaction.test-credentials');
+        $view = $this->views->render('process-transaction/test-credentials', ['credentials' => $this->getCredentials()]);
         $xml = $this->Call($view);
         if(!$xml) {
-            abort(500, $this->faultstring);
+            throw new \Exception($this->faultstring);
         }
         return $xml->TestCredentialsResult[0]->returnValue[0] == 'Success';
     }
 
     public function AuthorizeTransaction(WSTransaction $trans)
     {
-        $view = view('profitstars::process-transaction.authorize-transaction',[
+        $view = $this->views->render('process-transaction/authorize-transaction',[
+            'credentials' => $this->getCredentials(),
             'trans'=>$trans,
         ]);
         $xml = $this->Call($view);
@@ -43,14 +82,11 @@ class ProcessTransaction extends RequestBase {
         }
         if(!$xml->AuthorizeTransactionResult[0] || (string)$xml->AuthorizeTransactionResult[0]->Success[0] != 'true') {
             if($xml->AuthorizeTransactionResult[0] && (string)$xml->AuthorizeTransactionResult[0]->ResponseMessage[0]) {
-                // Not sure if this is working, so I'm going to throw the XML into the logs in case
-                // I need to come back and see what it looks like.
-                logger($xml->asXML());
                 $this->ResponseMessage = (string)$xml->AuthorizeTransactionResult[0]->ResponseMessage[0];
             } else {
                 // Had an error with the call that was not captured above, so let's log it and throw a 500 error for future development
-                logger:info($xml->asXML());
-                abort(500, "AuthorizeTransaction error occurred");
+                error_log($xml->asXML());
+                throw new \Exception("AuthorizeTransaction error occurred");
             }
             return false;
         }
@@ -64,7 +100,8 @@ class ProcessTransaction extends RequestBase {
      */
     public function CaptureTransaction($amount)
     {
-        $view = view('profitstars::process-transaction.capture-transaction',[
+        $view = $this->views->render('process-transaction/capture-transaction',[
+            'credentials' => $this->getCredentials(),
             'captureAmount'=>$amount,
             'originalReferenceNumber'=>$this->ReferenceNumber,
         ]);
@@ -75,14 +112,11 @@ class ProcessTransaction extends RequestBase {
         }
         if(!$xml->CaptureTransactionResult[0] || (string)$xml->CaptureTransactionResult[0]->Success[0] != 'true') {
             if($xml->CaptureTransactionResult[0] && (string)$xml->CaptureTransactionResult[0]->ResponseMessage[0]) {
-                // Not sure if this is working, so I'm going to throw the XML into the logs in case
-                // I need to come back and see what it looks like.
-                logger($xml->asXML());
                 $this->ResponseMessage = (string)$xml->CaptureTransactionResult[0]->ResponseMessage[0];
             } else {
                 // Had an error with the call that was not captured above, so let's log it and throw a 500 error for future development
-                logger:info($xml->asXML());
-                abort(500, "CaptureTransaction error occurred");
+                error_log($xml->asXML());
+                throw new \Exception('CaptureTransaction error occurred');
             }
             return false;
         }
@@ -93,7 +127,8 @@ class ProcessTransaction extends RequestBase {
 
     public function VoidTransaction()
     {
-        $view = view('profitstars::process-transaction.void-transaction',[
+        $view = $this->views->render('process-transaction/void-transaction',[
+            'credentials' => $this->getCredentials(),
             'originalReferenceNumber'=>$this->ReferenceNumber,
         ]);
         $xml = $this->Call($view);
@@ -103,14 +138,11 @@ class ProcessTransaction extends RequestBase {
         }
         if(!$xml->VoidTransactionResult[0] || (string)$xml->VoidTransactionResult[0]->Success[0] != 'true') {
             if($xml->VoidTransactionResult[0] && (string)$xml->VoidTransactionResult[0]->ResponseMessage[0]) {
-                // Not sure if this is working, so I'm going to throw the XML into the logs in case
-                // I need to come back and see what it looks like.
-                logger($xml->asXML());
                 $this->ResponseMessage = (string)$xml->VoidTransactionResult[0]->ResponseMessage[0];
             } else {
                 // Had an error with the call that was not captured above, so let's log it and throw a 500 error for future development
-                logger:info($xml->asXML());
-                abort(500, "CaptureTransaction error occurred");
+                error_log($xml->asXML());
+                throw new \Exception('CaptureTransaction error occurred');
             }
             return false;
         }
@@ -123,7 +155,8 @@ class ProcessTransaction extends RequestBase {
      */
     public function RefundTransaction()
     {
-        $view = view('profitstars::process-transaction.refund-transaction',[
+        $view = $this->views->render('process-transaction/refund-transaction',[
+            'credentials' => $this->getCredentials(),
             'originalReferenceNumber'=>$this->ReferenceNumber,
         ]);
         // dd($view->render());
@@ -134,14 +167,11 @@ class ProcessTransaction extends RequestBase {
         }
         if(!$xml->RefundTransactionResult[0] || (string)$xml->RefundTransactionResult[0]->Success[0] != 'true') {
             if($xml->RefundTransactionResult[0] && (string)$xml->RefundTransactionResult[0]->ResponseMessage[0]) {
-                // Not sure if this is working, so I'm going to throw the XML into the logs in case
-                // I need to come back and see what it looks like.
-                logger($xml->asXML());
                 $this->ResponseMessage = (string)$xml->RefundTransactionResult[0]->ResponseMessage[0];
             } else {
                 // Had an error with the call that was not captured above, so let's log it and throw a 500 error for future development
-                logger:info($xml->asXML());
-                abort(500, "CaptureTransaction error occurred");
+                error_log($xml->asXML());
+                throw new \Exception('CaptureTransaction error occurred');
             }
             return false;
         }

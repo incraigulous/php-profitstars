@@ -1,0 +1,22 @@
+<phpunit
+        backupGlobals="false"
+        backupStaticAttributes="false"
+        bootstrap = "vendor/autoload.php"
+        colors = "true"
+        convertErrorsToExceptions = "true"
+        convertNoticesToExceptions = "false"
+        convertWarningsToExceptions = "false"
+        processIsolation="false"
+        stopOnFailure = "false"
+        stopOnError="false"
+        stopOnIncomplete="false"
+        stopOnSkipped="false"
+        syntaxCheck="true"
+        verbose="true"
+        strict="false">
+    <testsuites>
+        <testsuite name="ProfitStars Test Suite">
+            <directory suffix="Test.php">./tests/</directory>
+        </testsuite>
+    </testsuites>
+</phpunit>

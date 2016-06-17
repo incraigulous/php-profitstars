@@ -1,11 +1,11 @@
 {
-    "name": "jdavidbakr/laravel-profitstars",
+    "name": "incraigulous/php-profitstars",
     "description": "A service that processes ACH transactions throgh Jack Henry's ProfitStars API",
     "keywords": [
         "ACH",
         "ProfitStars"
     ],
-    "homepage": "https://github.com/jdavidbakr/ProfitStars",
+    "homepage": "https://github.com/incraigulous/php-profitstars",
     "license": "MIT",
     "authors": [
         {
@@ -13,16 +13,25 @@
             "email": "me@jdavidbaker.com",
             "homepage": "http://www.jdavidbaker.com",
             "role": "Developer"
+        },
+        {
+            "name": "Incraigulous",
+            "email": "me@craigwann.com",
+            "homepage": "http://www.craigwann.com",
+            "role": "Developer"
         }
     ],
     "require": {
-        "illuminate/support": "~5.1",
         "php" : ">=5.3.0",
-        "guzzlehttp/guzzle": "~5.3|~6.0.1|~6.1"
+        "guzzlehttp/guzzle": "~5.3|~6.0.1|~6.1",
+        "league/plates": "3.*",
+        "nesbot/carbon": "^1.21"
     },
     "require-dev": {
+        "vlucas/phpdotenv": "^2.0",
         "phpunit/phpunit" : "4.*",
-        "scrutinizer/ocular": "~1.1"
+        "scrutinizer/ocular": "~1.1",
+        "fzaninotto/faker": "~1.4"
     },
     "autoload": {
         "psr-4": {

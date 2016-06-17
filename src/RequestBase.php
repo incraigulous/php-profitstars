@@ -12,7 +12,7 @@ abstract class RequestBase {
     public $faultcode;
     public $faultstring;
 
-    public function Call($view)
+    public function Call($requestXml)
     {
         $client = new Client();
 
@@ -21,7 +21,7 @@ abstract class RequestBase {
                 'headers'=>[
                     'Content-Type'=>'text/xml;charset=UTF-8',
                 ],
-                'body'=>$view->render(),
+                'body'=>$requestXml,
             ]);
         } catch (ServerException $e) {
             $response = $e->getResponse();

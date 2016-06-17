@@ -3,14 +3,28 @@
 use jdavidbakr\ProfitStars\ProcessTransaction;
 use jdavidbakr\ProfitStars\WSTransaction;
 
-class ProcessTransactionTest extends TestCase
+class ProcessTransactionTest extends PHPUnit_Framework_TestCase
 {
     protected $object;
+    protected $faker;
 
     public function setUp()
     {
         parent::setUp();
-        $this->object = new ProcessTransaction;
+        try {
+            $dotenv = new Dotenv\Dotenv(dirname(__DIR__));
+            $dotenv->load();
+        } catch (Exception $e) {
+            exit('Could not find a .env file.');
+        }
+
+        $this->faker = Faker\Factory::create();
+        $this->object = new ProcessTransaction([
+            'store-id'=>getEnv('PROFIT_STARS_STORE_ID'),
+            'store-key'=>getEnv('PROFIT_STARS_STORE_KEY'),
+            'entity-id'=>getEnv('PROFIT_STARS_ENTITY_ID'),
+            'location-id'=>getEnv('PROFIT_STARS_LOCATION_ID'),
+        ]);
     }
 
     /**
@@ -33,7 +47,7 @@ class ProcessTransactionTest extends TestCase
         // First attempt with an empty transaction
         $trans = new WSTransaction;
         $this->assertFalse($this->object->AuthorizeTransaction($trans));
-        $this->assertEquals($this->object->ResponseMessage, 'Server was unable to read request. ---> There is an error in XML document (14, 42). ---> The string \'\' is not a valid AllXsd value.');
+        $this->assertContains('Server was unable to read request.', $this->object->ResponseMessage);
 
         // Now try with a trans that will fail
         // I haven't been able to figure out how to get a trans to fail, so I'm hoping that what I have works? If not, I have it logging so we can identify how
@@ -53,9 +67,9 @@ class ProcessTransactionTest extends TestCase
         $trans = new WSTransaction;
         $trans->RoutingNumber = 111000025;
         $trans->AccountNumber = 5637492437;
-        $trans->TotalAmount = 9.95;
-        $trans->TransactionNumber = str_random(10);
-        $trans->NameOnAccount = str_random(10);
+        $trans->TotalAmount = $this->faker->numberBetween(0, 99999);
+        $trans->TransactionNumber = $this->faker->numberBetween(0, 99999);
+        $trans->NameOnAccount = $this->faker->name();
         $trans->EffectiveDate = \Carbon\Carbon::now()->format("Y-m-d");
         $this->assertTrue($this->object->AuthorizeTransaction($trans), $this->object->ResponseMessage);
     }
@@ -65,9 +79,9 @@ class ProcessTransactionTest extends TestCase
         $trans = new WSTransaction;
         $trans->RoutingNumber = 111000025;
         $trans->AccountNumber = 5637492437;
-        $trans->TotalAmount = 9.95;
-        $trans->TransactionNumber = str_random(10);
-        $trans->NameOnAccount = str_random(10);
+        $trans->TotalAmount = $this->faker->numberBetween(0, 99999);
+        $trans->TransactionNumber = $this->faker->numberBetween(0, 99999);
+        $trans->NameOnAccount = $this->faker->name();
         $trans->EffectiveDate = \Carbon\Carbon::now()->format("Y-m-d");
         $this->assertTrue($this->object->AuthorizeTransaction($trans), $this->object->ResponseMessage);
 
@@ -80,9 +94,9 @@ class ProcessTransactionTest extends TestCase
         $trans = new WSTransaction;
         $trans->RoutingNumber = 111000025;
         $trans->AccountNumber = 5637492437;
-        $trans->TotalAmount = 9.95;
-        $trans->TransactionNumber = str_random(10);
-        $trans->NameOnAccount = str_random(10);
+        $trans->TotalAmount = $this->faker->numberBetween(0, 99999);
+        $trans->TransactionNumber = $this->faker->numberBetween(0, 99999);
+        $trans->NameOnAccount = $this->faker->name();
         $trans->EffectiveDate = \Carbon\Carbon::now()->format("Y-m-d");
         $this->assertTrue($this->object->AuthorizeTransaction($trans), $this->object->ResponseMessage);
 
@@ -97,9 +111,9 @@ class ProcessTransactionTest extends TestCase
         $trans = new WSTransaction;
         $trans->RoutingNumber = 111000025;
         $trans->AccountNumber = 5637492437;
-        $trans->TotalAmount = 9.95;
-        $trans->TransactionNumber = str_random(10);
-        $trans->NameOnAccount = str_random(10);
+        $trans->TotalAmount = $this->faker->numberBetween(0, 99999);
+        $trans->TransactionNumber = $this->faker->numberBetween(0, 99999);
+        $trans->NameOnAccount = $this->faker->name();
         $trans->EffectiveDate = \Carbon\Carbon::now()->format("Y-m-d");
         $this->assertTrue($this->object->AuthorizeTransaction($trans), $this->object->ResponseMessage);
         $ReferenceNumber = $this->object->ReferenceNumber;
