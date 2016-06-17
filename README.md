@@ -4,7 +4,7 @@
 [![Software License][ico-license]](LICENSE.md)
 [![Total Downloads][ico-downloads]][link-downloads]
 
-Jack Henry ProfitStars provides an API for handling ACH transactions. This package is a Laravel/Lumen wrapper
+Jack Henry ProfitStars provides an API for handling ACH transactions. This package is a wrapper
 to access these transactions.
 
 The package is currently not exhaustive in terms of what is available from the API; I have only implemented
