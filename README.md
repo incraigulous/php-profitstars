@@ -22,7 +22,13 @@ $ composer require incraigulous/php-profitstars
 ## Usage
 
 ``` php
-$proc = new \incraigulous\ProfitStars\ProcessTransaction;
+$credentials = [
+    'store-id'=>"YOUR_STORE_ID",
+    'store-key'=>"YOUR_STORE_KEY",
+    'entity-id'=>"YOUR_ENTITY_ID",
+    'location-id'=>"YOUR_LOCATION_ID",
+];
+$proc = new \incraigulous\ProfitStars\ProcessTransaction($credentials);
 $trans = new \incraigulous\ProfitStars\WSTransaction;
 
 // Test connection
@@ -82,6 +88,11 @@ Please see [CHANGELOG](CHANGELOG.md) for more information what has changed recen
 ## Contributing
 
 Please see [CONTRIBUTING](CONTRIBUTING.md) and [CONDUCT](CONDUCT.md) for details.
+
+## Testing
+
+PhpUnit can be run directly from the package folder. You will need to include a .env file to provide your sandbox connection credentials. An example .env file has been provided (.env.example).
+
 
 ## Security
 
