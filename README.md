@@ -1,4 +1,4 @@
-# laravel-profitstars
+# php-profitstars
 
 [![Latest Version on Packagist][ico-version]][link-packagist]
 [![Software License][ico-license]](LICENSE.md)
@@ -16,40 +16,14 @@ and if you should need additional pieces please feel free to modify and submit a
 Via Composer
 
 ``` bash
-$ composer require jdavidbakr/laravel-profitstars
-```
-
-After installing via Composer, add the service provider:
-
-``` php
-jdavidbakr\ProfitStars\ProfitStarsServiceProvider::class
-```
-###Laravel Configuration
-
-Publish the config file:
-
-``` bash
-php artisan vendor:publish
-```
-
-This will place a file in the config directory that will manage your connection credentials. 
-
-###Lumen Configuration
-
-Add the following to your .env file:
-
-```
-PROFIT_STARS_STORE_ID=YOUR STORE ID
-PROFIT_STARS_STORE_KEY=YOUR STORE KEY
-PROFIT_STARS_ENTITY_ID=YOUR ENTITY ID
-PROFIT_STARS_LOCATION_ID=YOUR LOCATION ID
+$ composer require incraigulous/php-profitstars
 ```
 
 ## Usage
 
 ``` php
-$proc = new \jdavidbakr\ProfitStars\ProcessTransaction;
-$trans = new \jdavidbakr\ProfitStars\WSTransaction;
+$proc = new \incraigulous\ProfitStars\ProcessTransaction;
+$trans = new \incraigulous\ProfitStars\WSTransaction;
 
 // Test connection
 if($proc->TestConnection()) {
@@ -115,18 +89,21 @@ If you discover any security related issues, please email me@jdavidbaker.com ins
 
 ## Credits
 
-- [J David Baker][link-author]
+This package was forked from @jdavidbakers's Laravel specific Profit Stars SDK.
+
+- [J David Baker](https://github.com/jdavidbakr)
+- [Incraigulous][link-author]
 - [All Contributors][link-contributors]
 
 ## License
 
 The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
 
-[ico-version]: https://img.shields.io/packagist/v/jdavidbakr/laravel-profitstars.svg?style=flat-square
+[ico-version]: https://img.shields.io/packagist/v/incraigulous/php-profitstars.svg?style=flat-square
 [ico-license]: https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square
-[ico-downloads]: https://img.shields.io/packagist/dt/jdavidbakr/laravel-profitstars.svg?style=flat-square
+[ico-downloads]: https://img.shields.io/packagist/dt/incraigulous/php-profitstars.svg?style=flat-square
 
-[link-packagist]: https://packagist.org/packages/jdavidbakr/laravel-profitstars
-[link-downloads]: https://packagist.org/packages/jdavidbakr/laravel-profitstars
-[link-author]: https://github.com/jdavidbakr
+[link-packagist]: https://packagist.org/packages/incraigulous/php-profitstars
+[link-downloads]: https://packagist.org/packages/incraigulous/php-profitstars
+[link-author]: https://github.com/incraigulous
 [link-contributors]: ../../contributors
