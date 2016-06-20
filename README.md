@@ -97,7 +97,7 @@ if($proc->RefundTransaction()) {
 
 ``` php
 
-$proc = new \jdavidbakr\ProfitStars\ProcessTransaction;
+$proc = new \jdavidbakr\ProfitStars\PaymentVault;
 $recur = new \jdavidbakr\ProfitStars\WSRecurr;
 $cust = new \jdavidbakr\ProfitStars\WSCustomer;
 $account = new \jdavidbakr\ProfitStars\WSAccount;
