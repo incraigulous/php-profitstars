@@ -13,27 +13,28 @@ class PaymentVault extends RequestBase {
      */
     public function TestConnection()
     {
-        $view = view('profitstars::payment-vault.test-connection');
+        $view = $this->views->render('payment-vault/test-connection', ['credentials' => $this->getCredentials()]);
         $xml = $this->Call($view);
         if(!$xml) {
-            abort(500, $this->faultstring);
+            throw new \Exception($this->faultstring);
         }
         return (bool)$xml->TestConnectionResult[0];
     }
 
     public function TestCredentials()
     {
-        $view = view('profitstars::payment-vault.test-credentials');
+        $view = $this->views->render('payment-vault/test-credentials', ['credentials' => $this->getCredentials()]);
         $xml = $this->Call($view);
         if(!$xml) {
-            abort(500, $this->faultstring);
+            throw new \Exception($this->faultstring);
         }
         return $xml->TestCredentialsResult[0]->returnValue[0] == 'Success';
     }
 
     public function RegisterCustomer(WSCustomer $customer)
     {
-        $view = view('profitstars::payment-vault.register-customer', [
+        $view = $this->views->render('payment-vault/register-customer', [
+                'credentials' => $this->getCredentials(),
                 'customer'=>$customer,
             ]);
         // dd($view->render());
@@ -44,14 +45,11 @@ class PaymentVault extends RequestBase {
         }
         if(!$xml->RegisterCustomerResult || (string)$xml->RegisterCustomerResult->returnValue[0] != 'Success') {
             if($xml->RegisterCustomerResult && (string)$xml->RegisterCustomerResult->ResponseMessage[0]) {
-                // Not sure if this is working, so I'm going to throw the XML into the logs in case
-                // I need to come back and see what it looks like.
-                logger($xml->asXML());
                 $this->ResponseMessage = (string)$xml->RegisterCustomerResult->ResponseMessage[0];
             } else {
                 // Had an error with the call that was not captured above, so let's log it and throw a 500 error for future development
-                logger:info($xml->asXML());
-                abort(500, "RegisterCustomer error occurred");
+                error_log($xml->asXML());
+                throw new \Exception("RegisterCustomer error occurred");
             }
             return false;
         }
@@ -60,7 +58,8 @@ class PaymentVault extends RequestBase {
 
     public function RegisterAccount(WSAccount $account)
     {
-        $view = view('profitstars::payment-vault.register-account', [
+        $view = $this->views->render('payment-vault/register-account', [
+                'credentials' => $this->getCredentials(),
                 'account'=>$account,
             ]);
         // dd($view->render());
@@ -71,14 +70,11 @@ class PaymentVault extends RequestBase {
         }
         if(!$xml->RegisterAccountResult || (string)$xml->RegisterAccountResult->returnValue[0] != 'Success') {
             if($xml->RegisterAccountResult && (string)$xml->RegisterAccountResult->ResponseMessage[0]) {
-                // Not sure if this is working, so I'm going to throw the XML into the logs in case
-                // I need to come back and see what it looks like.
-                logger($xml->asXML());
                 $this->ResponseMessage = (string)$xml->RegisterAccountResult->ResponseMessage[0];
             } else {
                 // Had an error with the call that was not captured above, so let's log it and throw a 500 error for future development
-                logger:info($xml->asXML());
-                abort(500, "RegisterAccount error occurred");
+                error_log($xml->asXML());
+                throw new \Exception("RegisterAccount error occurred");
             }
             return false;
         }
@@ -87,7 +83,8 @@ class PaymentVault extends RequestBase {
 
     public function SetupRecurringPayment(WSRecurr $recur)
     {
-        $view = view('profitstars::payment-vault.setup-recurring-payment', [
+        $view = $this->views->render('payment-vault/setup-recurring-payment', [
+                'credentials' => $this->getCredentials(),
                 'recur'=>$recur,
             ]);
         // dd($view->render());
@@ -98,14 +95,11 @@ class PaymentVault extends RequestBase {
         }
         if(!$xml->SetupRecurringPaymentResult || (string)$xml->SetupRecurringPaymentResult->returnValue[0] != 'Success') {
             if($xml->SetupRecurringPaymentResult && (string)$xml->SetupRecurringPaymentResult->message[0]) {
-                // Not sure if this is working, so I'm going to throw the XML into the logs in case
-                // I need to come back and see what it looks like.
-                logger($xml->asXML());
                 $this->ResponseMessage = (string)$xml->SetupRecurringPaymentResult->message[0];
             } else {
                 // Had an error with the call that was not captured above, so let's log it and throw a 500 error for future development
-                logger:info($xml->asXML());
-                abort(500, "SetupRecurringPayment error occurred");
+                error_log($xml->asXML());
+                throw new \Exception("SetupRecurringPayment error occurred");
             }
             return false;
         }

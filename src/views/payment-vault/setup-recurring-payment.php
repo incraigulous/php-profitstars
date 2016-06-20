@@ -1,0 +1,28 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:pv="https://ssl.selectpayment.com/PV">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <pv:SetupRecurringPayment>
+         <pv:storeId><?=$this->e($credentials['store-id'])?></pv:storeId>
+         <pv:storeKey><?=$this->e($credentials['store-key'])?></pv:storeKey>
+         <pv:entityId><?=$this->e($credentials['entity-id'])?></pv:entityId>
+         <pv:wsRecurr>
+            <pv:CustomerNumber><?=$this->e($recur->CustomerNumber)?></pv:CustomerNumber>
+            <pv:AccountReferenceID><?=$this->e($recur->AccountReferenceID)?></pv:AccountReferenceID>
+            <pv:LocationID><?=$this->e($credentials['location-id'])?></pv:LocationID>
+            <pv:Amount><?=$this->e($recur->Amount)?></pv:Amount>
+            <pv:Description><?=$this->e($recur->Description)?></pv:Description>
+            <pv:InvoiceNumber><?=$this->e($recur->InvoiceNumber)?></pv:InvoiceNumber>
+            <pv:Frequency><?=$this->e($recur->Frequency)?></pv:Frequency>
+            <pv:PaymentDay><?=$this->e($recur->PaymentDay)?></pv:PaymentDay>
+            <pv:StartDate><?=$this->e($recur->StartDate)?></pv:StartDate>
+            <pv:NumPayments><?=$this->e($recur->NumPayments)?></pv:NumPayments>
+            <pv:PaymentsToDate><?=$this->e($recur->PaymentsToDate)?></pv:PaymentsToDate>
+            <pv:NotificationMethod><?=$this->e($recur->NotificationMethod)?></pv:NotificationMethod>
+            <pv:NextPaymentDate><?=$this->e($recur->NextPaymentDate)?></pv:NextPaymentDate>
+            <pv:Enabled><?=$this->e($recur->Enabled)?></pv:Enabled>
+            <pv:PaymentOrigin>Internet</pv:PaymentOrigin>
+            <pv:RecurringReferenceID><?=$this->e($recur->RecurringReferenceID)?></pv:RecurringReferenceID>
+         </pv:wsRecurr>
+      </pv:SetupRecurringPayment>
+   </soapenv:Body>
+</soapenv:Envelope>

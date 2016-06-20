@@ -5,14 +5,27 @@ use jdavidbakr\ProfitStars\WSCustomer;
 use jdavidbakr\ProfitStars\WSAccount;
 use jdavidbakr\ProfitStars\WSRecurr;
 
-class PaymentVaultTest extends TestCase
+class PaymentVaultTest extends PHPUnit_Framework_TestCase
 {
     protected $object;
 
     public function setUp()
     {
         parent::setUp();
-        $this->object = new PaymentVault;
+        try {
+            $dotenv = new Dotenv\Dotenv(dirname(__DIR__));
+            $dotenv->load();
+        } catch (Exception $e) {
+            exit('Could not find a .env file.');
+        }
+
+        $this->faker = Faker\Factory::create();
+        $this->object = new PaymentVault([
+            'store-id'=>getEnv('PROFIT_STARS_STORE_ID'),
+            'store-key'=>getEnv('PROFIT_STARS_STORE_KEY'),
+            'entity-id'=>getEnv('PROFIT_STARS_ENTITY_ID'),
+            'location-id'=>getEnv('PROFIT_STARS_LOCATION_ID'),
+        ]);
     }
 
     public function testTestConnection()
@@ -28,8 +41,8 @@ class PaymentVaultTest extends TestCase
     public function testRecurring()
     {
         $faker = \Faker\Factory::create();
-        $customer_number = str_random(50);
-        $account_reference_id = str_random(50);
+        $customer_number = $this->faker->numberBetween(0, 99999);
+        $account_reference_id =$this->faker->numberBetween(0, 99999);
 
         // 1. Register a new customer
         $cust = new WSCustomer;
@@ -61,7 +74,7 @@ class PaymentVaultTest extends TestCase
         $recur->NextPaymentDate = $start_date->format("Y-m-d");
         $recur->NumPayments = 5;
         $recur->PaymentsToDate = 0;
-        $recur->RecurringReferenceID = str_random(50);
+        $recur->RecurringReferenceID = $this->faker->numberBetween(0, 99999);
 
         $this->assertTrue($this->object->SetupRecurringPayment($recur), $this->object->ResponseMessage);
     }

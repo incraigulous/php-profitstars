@@ -2,49 +2,10 @@
 
 namespace jdavidbakr\ProfitStars;
 
-use League\Plates\Engine as Plates;
-
 class ProcessTransaction extends RequestBase {
     protected $endpoint = 'https://ws.eps.profitstars.com/PV/TransactionProcessing.asmx';
     public $ReferenceNumber;
     public $ResponseMessage;
-    public $credentials;
-    public $views;
-
-    public function __construct(array $credentials)
-    {
-        $this->setCredentials($credentials);
-        $this->initViews();
-    }
-
-    /**
-     * Initialize plates.
-     */
-    protected function initViews() {
-        $this->views = new Plates(dirname(__FILE__) . '/views');
-    }
-
-    /**
-     * Load the credentials.
-     * @param $credentials
-     * @throws \Exception
-     */
-    public function setCredentials($credentials)
-    {
-        if (empty($credentials['store-id'])) throw new \Exception('ProfitStars store key is required.');
-        if (empty($credentials['store-key'])) throw new \Exception('ProfitStars store id is required.');
-        if (empty($credentials['entity-id'])) throw new \Exception('ProfitStars entity id is required.');
-        if (empty($credentials['location-id'])) throw new \Exception('ProfitStars location id is required.');
-        $this->credentials = $credentials;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getCredentials()
-    {
-        return $this->credentials;
-    }
 
     /**
      * Tests the connection to the web service
