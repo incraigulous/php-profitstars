@@ -45,7 +45,13 @@ if($proc->TestCredentials()) {
 ## Usage - Processing Transactions
 
 ``` php
-$proc = new \jdavidbakr\ProfitStars\ProcessTransaction;
+$credentials = [
+    'store-id'=>"YOUR_STORE_ID",
+    'store-key'=>"YOUR_STORE_KEY",
+    'entity-id'=>"YOUR_ENTITY_ID",
+    'location-id'=>"YOUR_LOCATION_ID",
+];
+$proc = new \jdavidbakr\ProfitStars\ProcessTransaction($credentials);
 $trans = new \jdavidbakr\ProfitStars\WSTransaction;
 
 // AuthorizeTransaction
