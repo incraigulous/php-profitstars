@@ -4,7 +4,7 @@
 [![Software License][ico-license]](LICENSE.md)
 [![Total Downloads][ico-downloads]][link-downloads]
 
-Jack Henry ProfitStars provides an API for handling ACH transactions. This package is a Laravel/Lumen wrapper
+Jack Henry ProfitStars provides an API for handling ACH transactions. This package is a wrapper
 to access these transactions.
 
 The package is currently not exhaustive in terms of what is available from the API; I have only implemented
@@ -22,7 +22,13 @@ $ composer require incraigulous/php-profitstars
 ## Usage
 
 ``` php
-$proc = new \jdavidbakr\ProfitStars\ProcessTransaction;
+$credentials = [
+    'store-id'=>"YOUR_STORE_ID",
+    'store-key'=>"YOUR_STORE_KEY",
+    'entity-id'=>"YOUR_ENTITY_ID",
+    'location-id'=>"YOUR_LOCATION_ID",
+];
+$proc = new \jdavidbakr\ProfitStars\ProcessTransaction($credentials);
 
 // Test connection
 if($proc->TestConnection()) {
@@ -154,6 +160,11 @@ The Frequency and the PaymentDay define the schedule of the recurring payment.  
 ## Contributing
 
 Please see [CONTRIBUTING](CONTRIBUTING.md) and [CONDUCT](CONDUCT.md) for details.
+
+## Testing
+
+PhpUnit can be run directly from the package folder. You will need to include a .env file to provide your sandbox connection credentials. An example .env file has been provided (.env.example).
+
 
 ## Security
 
