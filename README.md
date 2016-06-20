@@ -22,8 +22,7 @@ $ composer require incraigulous/php-profitstars
 ## Usage
 
 ``` php
-$proc = new \incraigulous\ProfitStars\ProcessTransaction;
-$trans = new \incraigulous\ProfitStars\WSTransaction;
+$proc = new \jdavidbakr\ProfitStars\ProcessTransaction;
 
 // Test connection
 if($proc->TestConnection()) {
@@ -34,6 +33,14 @@ if($proc->TestConnection()) {
 if($proc->TestCredentials()) {
 	// Success
 }
+
+```
+
+## Usage - Processing Transactions
+
+``` php
+$proc = new \jdavidbakr\ProfitStars\ProcessTransaction;
+$trans = new \jdavidbakr\ProfitStars\WSTransaction;
 
 // AuthorizeTransaction
 $trans->RoutingNumber = 111000025;
@@ -74,10 +81,75 @@ if($proc->RefundTransaction()) {
 
 ```
 
-## Change log
+## Usage - Recurring Payments
 
-Please see [CHANGELOG](CHANGELOG.md) for more information what has changed recently.
+``` php
 
+$proc = new \jdavidbakr\ProfitStars\ProcessTransaction;
+$recur = new \jdavidbakr\ProfitStars\WSRecurr;
+$cust = new \jdavidbakr\ProfitStars\WSCustomer;
+$account = new \jdavidbakr\ProfitStars\WSAccount;
+
+// RegisterCustomer
+$cust->IsCompany = false;
+$cust->CustomerNumber = 12345;
+$cust->FirstName = 'Alex';
+$cust->LastName = 'Ramirez';
+$cust->Email = 'test@example.com';
+$cust->Address1 = '1234 N Sunny Ln';
+$cust->City = 'Tulsa';
+$cust->StateRegion = 'OK';
+$cust->PostalCode = '12345';
+if($proc->RegisterCustomer($cust)) {
+	// Success;
+} else {
+	// Error message in $proc->ResponseMessage
+}
+
+// RegisterAccount
+$account->CustomerNumber = 12345; // Should match the RegisterCustomer value
+$account->NameOnAccount = 'Joe Smith';
+$account->RoutingNumber = 111000025;
+$account->AccountNumber = 5637492437;
+$account->AccountReferenceID = 67890; // This must be unique and will be used to setup the recurring payment
+if($proc->RegisterAccount($account)) {
+	// Success
+} else {
+	// Error message in $proc->ResponseMessage
+}
+
+// SetupRecurringPayment
+$recur->CustomerNumber = 12345; // What you used in RegisterCustomer
+$recur->AccountReferenceID = 67890; // What you used in RegisterAccount
+$recur->Amount = 1.23; // The amount that will be charged each time
+$recur->InvoiceNumber = 09876; // Optional
+$recur->Frequency = 'Once_a_Month'; // Once_a_Month, Twice_a_Month, Once_a_Week, Every_2_Weeks, Once_a_Quarter, Twice_a_Year, Once_a_Year
+$recur->PaymentDay = 1; // See notes below
+$recur->NumPayments = 10; // Valid values are 1 - 100, or 999 for indefinite
+$recur->PaymentsToDate = 0; // Should be zero
+$recur->NextPaymentDate = '2015-11-04'; // Must not be before tomorrow
+$recur->RecurringReferenceID = 12345; // Must set a value here like you did in the customer and account calls
+if($proc->SetupRecurringPayment($recur)) {
+	// Success
+} else {
+	// Error message is $proc->ResponseMessage
+}
+
+```
+
+### Recurring Notes
+
+For recurring, a Customer Number and Account Reference ID is required.
+
+The Frequency and the PaymentDay define the schedule of the recurring payment.  Payment Day is defined as follows:
+
+* Once_a_Month: 1 - 31, or 32 for the last day of the month
+* Once_a_Quarter: Same as above
+* Twice_a_year: Same as above
+* Once_a_Year: Same as above
+* Twice_a_Month: 1 = 1st and 15th, 2 = 15th and last
+* Once_a_Week: 0 - Sun, 1 = Mon, ... 5 = Fri, 6 = Sat
+* Every_2_Weeks: same as Once_a_Week
 
 ## Contributing
 
